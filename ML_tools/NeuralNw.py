@@ -12,7 +12,9 @@ class NeuralNetwork:
         
         for i in np.arange(0,len(layers)-2): # bcoz last layer is output and the previous one before it is connecting all to it
             w=np.random.randn(layers[i]+1,layers[i+1]+1)
-            self.W.append(w/np.sqrt(layers[-2])) # normalizing with the elements in the final layer 
+            self.W.append(w/np.sqrt(layers[-2])) # normalizing the variance with the elements in the final layer
+        w=np.random.randn(layers[-2]+1,layers[-1])
+        self.W.append(w/np.sqrt(layers[-2]))
             
     def __repr__(self):
         # pythons debugging function
@@ -26,7 +28,7 @@ class NeuralNetwork:
         return x*(1-x)
         
     # training phase
-    def fit(self,X,y,epochs=1000,displayUpdate=10000):
+    def fit(self,X,y,epochs=1000,displayUpdate=1000):
         #insert columns of 1 in the input data as a bias
         X=np.c_[X,np.ones((X.shape[0]))]
         
@@ -36,10 +38,10 @@ class NeuralNetwork:
             for (x,target) in zip(X,y):
                 self.fit_partial(x,target)
                 
-                #check to see if we should display the training update
-                if epoch==0 or (epoch+1)%displayUpdate==0:
-                    loss=self.calculate_loss(X,y)
-                    print("Epoch={}, loss={:.7f}".format(epoch+1,loss))
+            #check to see if we should display the training update
+            if epoch==0 or (epoch+1)%displayUpdate==0:
+                loss=self.calculate_loss(X,y)
+                print("Epoch={}, loss={:.7f}".format(epoch+1,loss))
     
     def fit_partial(self,x,y):
         #construct set of output activations for each layer
@@ -65,13 +67,14 @@ class NeuralNetwork:
         #BACKPROPAGATION
         #it starts with the last layer or the final output
         # and then goes back to the first layer
-            error=A[-1]-y
+        error=A[-1]-y
         
         # Now from now onwards , we apply the chain rule to find
         #deltas----chain rule----
         
-            D=[error*self.sigmoid_deriv(A[-1])]
+        D=[error*self.sigmoid_deriv(A[-1])]
             
+        # begin from the last layer towards the first layer
         for layer in np.arange(len(A)-2,0,-1):
             delta=D[-1].dot(self.W[layer].T)
             delta=delta*self.sigmoid_deriv(A[layer])
@@ -85,7 +88,7 @@ class NeuralNetwork:
         
         #since we looped backwards, we need to reverse the deltas
         D=D[::-1] # reverse a list
-        
+        #print(D)
         # WEIGHT UPDATE
         #loop over laters
         for layer in np.arange(0,len(self.W)):
