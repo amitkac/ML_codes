@@ -8,7 +8,7 @@
 
 # Machine learning codes
 This repository containd various machine learning codes starting from the basic perceptron network to advanced neural networks.  It also has the basic implementation of stochastic gradient method, and data pre-processors for different image datasets. The datasets used to train these models are:
-* CIFAR10 (https://www.cs.toronto.edu/~kriz/cifar.html).
+* CIFAR-10 (https://www.cs.toronto.edu/~kriz/cifar.html).
 * MNIST (http://yann.lecun.com/exdb/mnist/).
 
 ## Table of contents
